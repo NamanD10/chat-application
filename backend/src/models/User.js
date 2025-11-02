@@ -24,11 +24,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "",
     },
-    interests: [
-        {
-            type: String
-        }
-    ],
+    bookInterests: [],
+    cinemaInterests: [],
     isOnboarded: {
         type: Boolean,
         default: false,
