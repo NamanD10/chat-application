@@ -10,34 +10,61 @@ import ChatPage from './pages/ChatPage'
 import toast, { Toaster } from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
 import { axiosInstance } from './lib/axios.js'
+import PageLoader from './components/pageLoader.jsx'
+import { getAuthUser } from './lib/api.js'
+import useAuthUser from './hooks/useAuthUser.js'
 
 const App = () => {
-  const {data: authData, isLoading, error} = useQuery({
-    queryKey: ['authUser'],
+  
+  const {isLoading, authUser} = useAuthUser();
 
-    queryFn: async() => {
-      const res = await axiosInstance.get("http://localhost:3000/api/auth/me");
-      return res.data;
-    },
-    retry : false
-});
+  const isAuthenticated = Boolean(authUser);
+  const isOnboarded = authUser?.isOnboarded;
 
-  const authUser = authData?.user;
-
-
+  if(isLoading) return ( <PageLoader /> )
 
   return (
     <div className='' data-theme='sunset'>
-      <button className="btn btn-primary" onClick={ () => toast.success("Hello World")}>Create A Toast</button>
+      
       <Routes>
       
-        <Route path='/' element={authUser ? <HomePage /> : <Navigate to='/login' />} />
-        <Route path='/signup' element={authUser ? <Navigate to='/' /> : <SignupPage />} />
-        <Route path='/login' element={authUser ? <Navigate to='/' /> : <LoginPage />} />
-        <Route path='/notifications' element={authUser ? <NotificationPage /> : <Navigate to='/login' />} />
-        <Route path='/call' element={authUser ? <CallPage /> : <Navigate to='/login' />} />
-        <Route path='/chat' element={authUser ? <ChatPage /> : <Navigate to='/login' />} />
-        <Route path='/onboarding' element={authUser ? <OnboardingPage /> : <Navigate to='/login' />} />
+        <Route path='/' element={isAuthenticated && isOnboarded ? 
+          (
+            <HomePage />
+          ) : (
+            <Navigate to= {!isAuthenticated ? "/login" : "/onboarding"} />
+          )} 
+        />
+        
+        <Route 
+          path='/signup' 
+          element={isAuthenticated ? <Navigate to='/onboarding' /> : <SignupPage />} 
+        />
+        
+        <Route 
+          path='/login' 
+          element={isAuthenticated ? <Navigate to='/' /> : <LoginPage />} 
+        />
+        
+        <Route 
+          path='/notifications' 
+          element={isAuthenticated ? <NotificationPage /> : <Navigate to='/login' />} 
+        />
+        
+        <Route 
+          path='/call' 
+          element={isAuthenticated ? <CallPage /> : <Navigate to='/login' />} 
+        />
+        
+        <Route 
+          path='/chat' 
+          element={isAuthenticated ? <ChatPage /> : <Navigate to='/login' />} 
+        />
+        
+        <Route 
+          path='/onboarding' 
+          element={isAuthenticated ? <OnboardingPage /> : <Navigate to='/login' />} 
+        />
 
       </Routes>
 
