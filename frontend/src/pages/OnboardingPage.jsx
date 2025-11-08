@@ -4,7 +4,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { completeOnboarding } from "../lib/api";
 import { LoaderIcon, MapPinIcon, ShipWheelIcon, ShuffleIcon } from "lucide-react";
-import { INTERESTS } from "../constants";
+import { bookInterests, cinemaInterests } from "../constants";
+import Select from 'react-select';
 
 const OnboardingPage = () => {
   const { authUser } = useAuthUser();
@@ -18,6 +19,9 @@ const OnboardingPage = () => {
     location: authUser?.location || "",
     profilePic: authUser?.profilePic || "",
   });
+
+  const [selectedBookTags, setSelectedBookTags] = useState([]);
+  const [selectedCinemaTags, setSelectedCinemaTags] = useState([]);
 
   const { mutate: onboardingMutation, isPending } = useMutation({
     mutationFn: completeOnboarding,
@@ -44,6 +48,16 @@ const OnboardingPage = () => {
     setFormState({ ...formState, profilePic: randomAvatar });
     toast.success("Random profile picture generated!");
   };
+
+  const handleBookSelectChange = (newValue) => {
+    setFormState({...formState, bookInterests: newValue.map((interest) => interest.label)});
+  };
+
+  const handleCinemaSelectChange = (newValue) => {
+    setFormState({...formState, cinemaInterests: newValue.map((interest) => interest.label)});
+  };
+
+  
 
   return (
     <div className="min-h-screen bg-base-100 flex items-center justify-center p-4">
@@ -114,19 +128,16 @@ const OnboardingPage = () => {
                 <label className="label">
                   <span className="label-text">Book Interests</span>
                 </label>
-                <select
-                  name="bookInterests"
-                  value={formState.bookInterests}
-                  onChange={(e) => setFormState({ ...formState, bookInterests : e.target.value })}
-                  className="select select-bordered w-full"                  
-                >
-                  <option value="">What kind of books you like</option>
-                  {INTERESTS[0].tags.map((tag) => (
-                    <option key={`book-${tag}`} value={tag.toLowerCase()}>
-                      {tag}
-                    </option>
-                  ))}
-                </select>
+                
+                <Select    
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                  placeholder="Select book genres you like"
+                  options={bookInterests}
+                  isMulti
+
+                  onChange={handleBookSelectChange}
+                />
               </div>
 
               {/* Cinema */}
@@ -134,19 +145,16 @@ const OnboardingPage = () => {
                 <label className="label">
                   <span className="label-text">Cinema Interests</span>
                 </label>
-                <select
-                  name="cinemaInterests"
-                  value={formState.cinemaInterests}
-                  onChange={(e) => setFormState({ ...formState, cinemaInterests: e.target.value })}
-                  className="select select-bordered w-full"
-                >
-                  <option value="">What kind of cinema you like</option>
-                  {INTERESTS[1].tags.map((tag) => (
-                    <option key={`learning-${tag}`} value={tag.toLowerCase()}>
-                      {tag}
-                    </option>
-                  ))}
-                </select>
+                
+                <Select    
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                  placeholder="Select movie genres you like"
+                  options={cinemaInterests}
+                  isMulti
+
+                  onChange={handleCinemaSelectChange}
+                />
               </div>
             </div>
 
