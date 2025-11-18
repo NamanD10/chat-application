@@ -120,23 +120,13 @@ const HomePage = () => {
 
                       {/* Interests as badges */}
                       <div className="flex flex-wrap gap-1.5">
-                        {user.bookInterests.map((interest) => {
-
-                          return(
-                            <span className="badge badge-secondary">
-                              {capitalize(interest)}
-                            </span>
-                          )
-                        })}
+                        <span className="badge badge-ghost">
+                            Book: {user.bookInterests.slice(0,3).map(capitalize).join(", ")}
+                          </span>
                         
-                        {user.cinemaInterests.map((interest) => {
-
-                          return(
-                            <span className="badge badge-accent">
-                              {capitalize(interest)}
-                            </span>
-                          )
-                        })}
+                        <span className="badge badge-ghost ">
+                          Movie: {user.cinemaInterests.slice(0,3).map(capitalize).join(", ")}
+                        </span>
                       </div>
                       
                       {/* User Bio  */}
