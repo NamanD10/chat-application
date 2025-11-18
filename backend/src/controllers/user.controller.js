@@ -10,7 +10,7 @@ export async function getRecommendedUsers (req, res) {
         const recommendedUsers = await User.find({
             $and : [
                 {_id: {$ne : currentUserId}},
-                {$id: {$in : currentUser.friends}},
+                {_id: {$nin : currentUser.friends}},
                 { isOnboarded: true },
             ]
         });
@@ -30,7 +30,7 @@ export async function getUserFriends (req, res) {
     try{
         const user = await User.findById(req.user.id)
             .select("friends")
-            .populate("friends", "fullName profilePic interests");
+            .populate("friends", "fullName profilePic bookInterests cinemaInterests");
 
         res.status(200).json(user.friends);
 
@@ -47,7 +47,7 @@ export async function getUserFriends (req, res) {
 export async function sendFriendRequest (req, res) { 
     try{
         const myId = req.user.id;
-        const {id : recipientId} = req.params.id;
+        const {id : recipientId} = req.params;
 
         if(myId == recipientId){
             return res.status(400).json({
@@ -92,7 +92,10 @@ export async function sendFriendRequest (req, res) {
         });
 
     } catch(error) {
-
+        console.error("Error in sendFriendRequest controller", error.message);
+        res.status(500).json({
+            message: "Internal server Error"
+        });
     }
 };
 
@@ -145,16 +148,17 @@ export async function acceptFriendRequest (req, res) {
 export async function getFriendRequests (req, res) {
 
     try{
-        const incomingreqs = await FriendRequest.find({
+        const incomingReqs = await FriendRequest.find({
             recipient: req.user.id,
             status: "pending",
-        }).populate("sender", "fullName, profilePic, interests");
+        }).populate("sender", "fullName profilePic bookInterests cinemaInterests");
 
         const acceptedReqs = await FriendRequest.find({
             recipient: req.user.id,
             status: "accepted",
-        }).populate("recipient", "fullName, profilePic");
+        }).populate("recipient", "fullName profilePic");
     
+        res.status(200).json({ incomingReqs, acceptedReqs});
     } catch (error) {
         console.log("Error in getPendindFriendRequests controller", error.message);
         res.status(500).json({
@@ -166,11 +170,13 @@ export async function getFriendRequests (req, res) {
 
 export async function getOutgoingFriendRequests (req, res) {
     try{
-        const outgoingFriendRequest = FriendRequest.find({
+        const outgoingFriendRequest = await FriendRequest.find({
             sender: req.user.id,
             status: "pending",
         })
-        .populate("recipient", "fullName profilePic interests");
+        .populate("recipient", "fullName profilePic bookInterests cinemaInterests");
+
+        res.status(200).json(outgoingFriendRequest);
     } catch (error) { 
         console.error("Error in getOutgoingFriendRequests controller", error.message);
         res.send(500).json({

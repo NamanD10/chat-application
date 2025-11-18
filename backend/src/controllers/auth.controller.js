@@ -136,15 +136,16 @@ export function logout(req, res) {
 export async function onboard(req, res) {
     try{
         const userId = req.user._id;
-        const {fullName, bio, interests, location} = req.body;
+        const {fullName, bio, bookInterests, cinemaInterests, location} = req.body;
 
-        if(!fullName || !bio || !interests || !location) {
+        if(!fullName || !bio || !bookInterests || !cinemaInterests || !location) {
             return res.status(400).json({
                 message: "All fields are required",
                 missingFields: [
                     !fullName && "fullName",
                     !bio && "bio",
-                    !interests && "interests",
+                    !bookInterests && "bookInterests",
+                    !cinemaInterests && "cinemaInterests",
                     !location && "location",
                 ].filter(Boolean),
             });
