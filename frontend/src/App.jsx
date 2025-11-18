@@ -13,10 +13,14 @@ import { axiosInstance } from './lib/axios.js'
 import PageLoader from './components/pageLoader.jsx'
 import { getAuthUser } from './lib/api.js'
 import useAuthUser from './hooks/useAuthUser.js'
+import { Home } from 'lucide-react'
+import Layout from './components/Layout.jsx'
+import { useThemeStore } from './store/useThemeStore.js'
 
 const App = () => {
   
   const {isLoading, authUser} = useAuthUser();
+  const {theme} = useThemeStore();
 
   const isAuthenticated = Boolean(authUser);
   const isOnboarded = authUser?.isOnboarded;
@@ -24,13 +28,17 @@ const App = () => {
   if(isLoading) return ( <PageLoader /> )
 
   return (
-    <div className='' data-theme='sunset'>
+    <div className='' data-theme={theme}>
       
       <Routes>
       
         <Route path='/' element={isAuthenticated && isOnboarded ? 
           (
-            <HomePage />
+            <Layout showSidebar={true}>
+              
+              <HomePage />
+
+            </Layout>
           ) : (
             <Navigate to= {!isAuthenticated ? "/login" : "/onboarding"} />
           )} 
@@ -43,7 +51,9 @@ const App = () => {
         
         <Route 
           path='/login' 
-          element={isAuthenticated ? <Navigate to='/' /> : <LoginPage />} 
+          element={isAuthenticated ? 
+          <Navigate to={isOnboarded ? "/" : "/onboarding"}/> 
+          : <LoginPage />} 
         />
         
         <Route 
@@ -61,9 +71,19 @@ const App = () => {
           element={isAuthenticated ? <ChatPage /> : <Navigate to='/login' />} 
         />
         
-        <Route 
-          path='/onboarding' 
-          element={isAuthenticated ? <OnboardingPage /> : <Navigate to='/login' />} 
+       <Route
+          path="/onboarding"
+          element={
+            isAuthenticated ? (
+              !isOnboarded ? (
+                <OnboardingPage />
+              ) : (
+                <Navigate to="/" />
+              )
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
         />
 
       </Routes>

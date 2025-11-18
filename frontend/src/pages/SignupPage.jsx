@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ShipWheelIcon } from 'lucide-react';
-import { Link, Navigate } from 'react-router';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { signup } from '../lib/api.js';
+import { Link } from 'react-router';
+import useSignup from '../hooks/useSignup.js';
 
 const SignupPage = () => {
   const [signupData, setSignupData] = useState({
@@ -11,21 +10,12 @@ const SignupPage = () => {
     password: "",
   });
 
-  const queryClient = useQueryClient();
-  const {
-    mutate: signupMutation,
-    isPending,
-    error,
-  } = useMutation({
-    mutationFn: signup,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-  });
+  const {error, isPending, signupMutation} = useSignup();
 
   const handleSignup = (e) => {
     e.preventDefault();
     signupMutation(signupData);
   };
-
 
   return (
       <div className='h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 '>
@@ -41,7 +31,7 @@ const SignupPage = () => {
 
               <span className=' text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary 
               to-secondary tracking-wider '>
-                Cine Read
+                CineRead
               </span>
            </div>
 
@@ -170,13 +160,12 @@ const SignupPage = () => {
               <div className='relative aspect-square max-w-sm mx-auto'>
                 <img src='./Video-call.png' alt='Video call illustration' className='w-full h-full'></img>
               </div>
-
               <div className='text-center space-y-3 mt-6'>
                 <h2 className='text-xl font-semibold'>Connect with book lovers worldwide</h2>
-                <p className='opacity-70'>Talk about books and movies you love, make friends and fuck each other</p>
+                <p className='opacity-70'>Talk about books and movies you love, make friends and fuck each other's books</p>
               </div>
+            
             </div>
-
           </div>
 
         </div>
