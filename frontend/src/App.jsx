@@ -73,7 +73,7 @@ const App = () => {
         />
         
         <Route 
-          path='/chat' 
+          path= '/chat/:id' 
           element={isAuthenticated ? <ChatPage /> : <Navigate to='/login' />} 
         />
         
