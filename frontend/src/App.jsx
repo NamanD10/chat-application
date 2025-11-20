@@ -10,7 +10,7 @@ import ChatPage from './pages/ChatPage'
 import toast, { Toaster } from 'react-hot-toast'
 import { useQuery } from '@tanstack/react-query'
 import { axiosInstance } from './lib/axios.js'
-import PageLoader from './components/pageLoader.jsx'
+import PageLoader from './components/PageLoader.jsx'
 import { getAuthUser } from './lib/api.js'
 import useAuthUser from './hooks/useAuthUser.js'
 import { Home } from 'lucide-react'
@@ -25,7 +25,7 @@ const App = () => {
   const isAuthenticated = Boolean(authUser);
   const isOnboarded = authUser?.isOnboarded;
 
-  if(isLoading) return ( <PageLoader /> )
+  if(isLoading) return <PageLoader />
 
   return (
     <div className='' data-theme={theme}>
