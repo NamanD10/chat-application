@@ -5,6 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "npx nodemon src/server.js",
+    "start": "node src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "chat-application": "file:..",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
